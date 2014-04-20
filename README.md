@@ -12,6 +12,8 @@ Copy files to a path and install Zend Framework 1.12.5 such that /usr/share/php/
 Usage
 =================
 
-./heartbleed -c test -s example.com -p 443 -v 
-./heartbleed -c test -s example.com -v 
-./heartbleed -c test -s example.com 
+./heartbleed -c test -s example.com -p 443 -v
+
+./heartbleed -c test -s example.com -v
+
+./heartbleed -c test -s example.com
