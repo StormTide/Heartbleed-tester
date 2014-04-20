@@ -1,0 +1,58 @@
+#!/usr/bin/env php
+<?php
+require_once('config.php');
+
+//Load library functions and setup Zend Framework entrypoint.
+error_reporting(E_ALL);
+
+//Setup framework libraries
+define('APP_PATH', realpath(dirname(__FILE__)));
+
+$paths = array(
+    APP_PATH,
+    ZFW_PREFIX . DIRECTORY_SEPARATOR . 'ZendFramework-'. ZFW_VERSION . DIRECTORY_SEPARATOR. 'library',
+    get_include_path()
+);
+
+set_include_path(implode(PATH_SEPARATOR, $paths));
+
+//Load the framework entry point
+require_once('Zend/Loader/Autoloader.php');
+
+//Setup class autoloading
+$autoloader = Zend_Loader_Autoloader::getInstance();
+$autoloader->setFallbackAutoloader(true);
+
+// Console GetOpt (Format: example|e[=-]{1}[type(i,s){1}] )
+$getopt = new Zend_Console_Getopt(array(
+    'command|c=s' => 'What to do. Options: test',
+    'server|s=s' => 'What server to test.',
+    'port|p-s' => 'Port (defaults 443)',
+    'verbose|v' => 'Display verbose information',
+    'help|h' => 'Display usage information'
+));
+
+try {
+    $getopt->parse();
+}
+catch(Zend_Console_Getopt_Exception $e) {
+    echo $e->getUsageMessage();
+    exit(1);
+}
+
+// Usage help
+if($getopt->getOption('h')) {
+    echo $getopt->getUsageMessage();
+    exit(0);
+}
+
+//Start Commands
+if(isset($getopt->c)) {
+    $command = new HeartBleed();
+    $status = $command->run($getopt);
+    exit($status);
+}
+
+//Nothing ran, show help, exit with error
+echo $getopt->getUsageMessage();
+exit(1);
