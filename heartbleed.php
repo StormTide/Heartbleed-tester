@@ -167,6 +167,7 @@ class HeartBleed {
                     break;
                 }
             }
+            $sslVer = $buffer['version'];
             unset($buffer, $payload);
 
             /*
@@ -179,14 +180,14 @@ class HeartBleed {
 
             $payloadRealLength = HEARTBLEED_TEST_SIZE - 3 - HEARTBLEED_PADDING_SIZE;
             $payloadFakeLength = sprintf('%04x', $payloadRealLength + HEARTBLEED_PADDING_SIZE); // Heartbleed into padding space
-            $packetLength = sprintf('%04x', $payloadRealLength + HEARTBLEED_PADDING_SIZE + 3);
+            $recordLength = 3 + $payloadRealLength + HEARTBLEED_PADDING_SIZE;
 
             // Send Heartbleed (Non-invasive test method via Ivan Ristic concept)
-            $heartbeat = "18 " . HEARTBLEED_TLS_VERSION . " " . $packetLength . " "; // 1 byte heartbeatmessagetype, 2 bytes tls version, 2 bytes message length
+            $heartbeat = sprintf('18 %04x %04x', $sslVer, $recordLength); // 1 byte heartbeatmessagetype, 2 bytes tls version, 2 bytes message length
             $heartbeat .= "01 " . $payloadFakeLength . " "; // 1 byte heartbeatrequesttype, 2bytes payload length
             $heartbeat .= trim(str_repeat(' 4C ', $payloadRealLength)); // Payload Data (L characters)
             $heartbeat .= trim(str_repeat(' 50 ', HEARTBLEED_PADDING_SIZE)); // Padding Data (P characters)
-            unset($payloadFakeLength, $packetLength);
+            unset($payloadFakeLength, $recordLength);
 
             if($this->_debug) {
                 echo "Sending HeartBeat: " . PHP_EOL;
