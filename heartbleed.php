@@ -175,7 +175,7 @@ class HeartBleed {
              * so only data we send is echoed back. With values below 16384 you will get back 16 bytes of
              * what I /think/ is random padding and not heartbleed data.
              * (Needs more research to verify its not 16 bytes of bled memory)
-             * Values below 4096 break for some unknown reason
+             * Values below 4096 break due to openssl's DEFAULT_BUFFER_SIZE and buffer flushing behavior.
              */
 
             $payloadRealLength = HEARTBLEED_TEST_SIZE - 3 - HEARTBLEED_PADDING_SIZE;
