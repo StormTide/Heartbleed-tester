@@ -120,7 +120,7 @@ class HeartBleed {
 
         if(!$fp) {
             echo "Error: $errstr ($errno)" . PHP_EOL;
-            if(is_resource($fp)) { if(is_resource($fp)) { fclose($fp); } }
+            if(is_resource($fp)) { fclose($fp); }
             return 1;
         } else {
             // ClientHello, etc... (from ssltest.py)
